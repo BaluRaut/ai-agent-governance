@@ -16,7 +16,7 @@ export function run(relativeDir: string, title: string): void {
 
   const template = resource(src, "google_model_armor_template");
   const raiTypes = template ? blocks(template, /rai_filters\s*\{/).map((b) => arg(b, "filter_type")) : [];
-  const NEEDED = ["HATE_SPEECH", "HARASSMENT", "SEXUALLY_EXPLICIT", "DANGEROUS_CONTENT"];
+  const NEEDED = ["HATE_SPEECH", "HARASSMENT", "SEXUALLY_EXPLICIT", "DANGEROUS"];
   const missing = NEEDED.filter((t) => !raiTypes.includes(t));
 
   check("a Model Armor template exists", template !== null);

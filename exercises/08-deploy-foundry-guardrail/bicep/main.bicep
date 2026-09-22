@@ -36,7 +36,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
+resource account 'Microsoft.CognitiveServices/accounts@2026-07-01' = {
   name: accountName
   location: location
   kind: 'AIServices'
@@ -70,7 +70,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
 }
 
 // TODO 5 — the guardrail.
-// Add a resource of type 'Microsoft.CognitiveServices/accounts/raiPolicies@2026-05-15-preview'
+// Add a resource of type 'Microsoft.CognitiveServices/accounts/raiPolicies@2026-07-01'
 // named guardrail, parented to the account, with:
 //   properties: {
 //     mode: 'Blocking'
@@ -86,7 +86,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
 //                                       matters for an agent reading retrieved content)
 //   - 'Protected Material Text' on 'Completion'
 
-resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
+resource project 'Microsoft.CognitiveServices/accounts/projects@2026-07-01' = {
   parent: account
   name: '${namePrefix}-project'
   location: location
@@ -99,7 +99,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
 }
 
 // Application Insights is attached as a connection, not a property.
-resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2025-06-01' = {
+resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2026-07-01' = {
   parent: project
   name: 'appinsights'
   properties: {
@@ -115,7 +115,7 @@ resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2025
 }
 
 // TODO 6 — a model deployment that actually uses the guardrail.
-// Add a 'Microsoft.CognitiveServices/accounts/deployments@2025-06-01' resource with:
+// Add a 'Microsoft.CognitiveServices/accounts/deployments@2026-07-01' resource with:
 //   properties: {
 //     model: { format: 'OpenAI', name: 'gpt-5-mini', version: '1' }
 //     raiPolicyName: <the guardrail resource's name>

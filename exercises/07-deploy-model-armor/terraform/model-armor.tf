@@ -6,7 +6,7 @@ resource "google_model_armor_template" "agent" {
   filter_config {
     # TODO 1 — the responsible AI filters.
     # Add a rai_settings block with rai_filters entries for HATE_SPEECH,
-    # HARASSMENT, SEXUALLY_EXPLICIT and DANGEROUS_CONTENT, each with
+    # HARASSMENT, SEXUALLY_EXPLICIT and DANGEROUS, each with
     # confidence_level = "MEDIUM_AND_ABOVE".
 
     # TODO 2 — prompt injection and jailbreak detection.

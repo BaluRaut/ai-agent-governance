@@ -37,7 +37,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
+resource account 'Microsoft.CognitiveServices/accounts@2026-07-01' = {
   name: accountName
   location: location
   kind: 'AIServices'
@@ -81,7 +81,7 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
 }
 
 // In ARM a guardrail is still called a RAI policy.
-resource guardrail 'Microsoft.CognitiveServices/accounts/raiPolicies@2026-05-15-preview' = {
+resource guardrail 'Microsoft.CognitiveServices/accounts/raiPolicies@2026-07-01' = {
   parent: account
   name: '${namePrefix}-guardrail'
   properties: {
@@ -107,7 +107,7 @@ resource guardrail 'Microsoft.CognitiveServices/accounts/raiPolicies@2026-05-15-
   }
 }
 
-resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
+resource project 'Microsoft.CognitiveServices/accounts/projects@2026-07-01' = {
   parent: account
   name: '${namePrefix}-project'
   location: location
@@ -120,7 +120,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
   }
 }
 
-resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2025-06-01' = {
+resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2026-07-01' = {
   parent: project
   name: 'appinsights'
   properties: {
@@ -138,7 +138,7 @@ resource tracing 'Microsoft.CognitiveServices/accounts/projects/connections@2025
 // The deployment must name the guardrail, or nothing is filtered. For hosted agents
 // the equivalent field takes the full resource ID, and a reference to a policy that
 // does not exist fails open silently.
-resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2025-06-01' = {
+resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2026-07-01' = {
   parent: account
   name: '${namePrefix}-chat'
   dependsOn: [

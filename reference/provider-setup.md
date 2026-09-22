@@ -31,6 +31,290 @@ Honest about what each platform costs you to experiment with, because the answer
 
 ---
 
+# AWS, for exercise 06
+
+## Command line and credentials
+
+```bash
+curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash   # macOS, recommended by AWS
+aws --version                                                  # expect 2.x
+```
+
+Either credential route works, because the Terraform provider reads the standard chain. Identity Center is the one AWS recommends; the long-term key flow is labelled *not recommended* on its own page ([quickstart](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)).
+
+```bash
+aws configure sso          # then: aws sso login --profile lab; export AWS_PROFILE=lab
+# or
+aws configure              # access key, secret, region, output format
+```
+
+Do not run Terraform until this returns an ARN:
+
+```bash
+aws sts get-caller-identity
+```
+
+## Permissions
+
+AWS publishes the guardrail policy itself ([guardrail permissions](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-permissions.html)), and adds one line that catches Terraform users specifically: if you pass tags when creating a guardrail, you also need `bedrock:TagResource`. **Terraform's `tags` and `default_tags` will trigger that.**
+
+Four managed policies get the exercise deployed, with one gap you must patch:
+
+```
+AmazonBedrockFullAccess
+CloudWatchLogsFullAccess
+IAMFullAccess
+AWSKeyManagementServicePowerUser   + the inline patch below
+```
+
+`AWSKeyManagementServicePowerUser` is missing three actions, and each breaks a specific step: `kms:ScheduleKeyDeletion` breaks `terraform destroy`, `kms:PutKeyPolicy` breaks setting a key policy, and `kms:EnableKeyRotation` breaks the `enable_key_rotation = true` in the exercise. Add them inline.
+
+Two things about `AmazonBedrockFullAccess` that are worth knowing before you debug an apply for an hour:
+
+- **It grants no `iam:CreateRole`, no `kms:CreateKey` and no `logs:` actions at all.** That is why the other three policies are on the list.
+- **Its `iam:PassRole` grant is scoped to `arn:aws:iam::*:role/*AmazonBedrock*`.** A sensibly named role like `agent-gov-bedrock-logging` is refused, with an error that does not mention the name. This is why the exercise names its role `AmazonBedrockLogging-…`, and the comment in the file says so.
+
+`AmazonBedrockLimitedAccess` cannot build this exercise: it is an explicit allowlist with no `PutModelInvocationLoggingConfiguration`.
+
+## Model access
+
+Your instinct is right and there are two exceptions. Verbatim: *access to all Amazon Bedrock foundation models is enabled by default with the correct AWS Marketplace permissions in all commercial AWS Regions*, and a first invocation of a third-party model starts the subscription in the background ([model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html)). So no console click-through.
+
+The exceptions: the invoking principal still needs the Marketplace actions, which `AmazonBedrockFullAccess` grants, and **Anthropic models still require a one-time first-use form** per account or organisation management account. There is a Terraform resource for that, `aws_bedrock_use_case_for_model_access`, which adopts an existing submission rather than failing.
+
+**None of this affects exercise 06**, because creating a guardrail and calling `ApplyGuardrail` need no model access at all.
+
+## Region
+
+Use **`us-east-1` or `us-west-2`**. Automated Reasoning checks are generally available in exactly six regions: those two plus `us-east-2`, `eu-central-1`, `eu-west-3` and `eu-west-1` ([automated reasoning](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-automated-reasoning-checks.html)).
+
+Be aware that **AWS no longer publishes a region list for Guardrails generally**, and none has ever existed for contextual grounding. The best published lower bound is the 25-region safeguard tier list ([tiers](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-tiers.html)). The two regions above satisfy everything.
+
+## Deploying
+
+```bash
+cd exercises/06-deploy-bedrock-guardrail/terraform
+terraform init
+terraform plan -out=tfplan     # read this before applying
+terraform apply tfplan
+terraform destroy
+```
+
+Two documented behaviours worth knowing. A saved plan file **stores sensitive values in cleartext**, so keep `tfplan` out of git; the repository's ignore rules already do. And `terraform destroy` takes no plan file, so for a reviewable teardown use `terraform plan -destroy -out=destroy.tfplan` then apply that.
+
+## Two things that will bite a shared account
+
+**Model invocation logging is a singleton per region per account.** The provider documentation says so plainly: defining it in more than one configuration overwrites the other. Two learners in one account will clobber each other.
+
+**Automated Reasoning has no Terraform resource.** There is no argument on `aws_bedrock_guardrail` for it and no separate resource in the provider. AWS's own guidance is to automate it through CloudFormation. If you want to try it, do it in the console.
+
+## Cost
+
+| | Idle |
+|---|---|
+| Guardrail with no traffic | **Nothing.** Billing is per text unit, with no standing meter |
+| Customer-managed key | **One dollar a month**, prorated hourly |
+| Empty log group | **Nothing.** Every dimension is per gigabyte, with five free |
+
+**About one dollar a month, all of it the key.** And note the teardown trap: the key keeps billing through its pending-deletion window, minimum seven days, after you destroy everything else.
+
+---
+
+# Google Cloud, for exercise 07
+
+## Command line and credentials
+
+Only one authentication command matters, and it is not the obvious one. The provider's own documentation says to authenticate with **Application Default Credentials**, and `gcloud auth login` alone does not set those. Google's own concept page is blunt: the command line tool itself does not use these credentials.
+
+```bash
+gcloud init
+gcloud config set project PROJECT_ID
+gcloud auth application-default login                       # the one Terraform reads
+gcloud auth application-default set-quota-project PROJECT_ID
+```
+
+Set the quota project override too, because credentials from the command line tool are associated with a Google-owned project:
+
+```hcl
+provider "google" {
+  project               = var.project_id
+  user_project_override = true
+  billing_project       = var.project_id
+}
+```
+
+## Services to enable
+
+```bash
+gcloud services enable \
+  modelarmor.googleapis.com \
+  aiplatform.googleapis.com \
+  orgpolicy.googleapis.com \
+  cloudresourcemanager.googleapis.com \
+  billingbudgets.googleapis.com
+```
+
+There is no per-region enablement. Model Armor uses a client-side endpoint override, needed only for a location other than the default:
+
+```bash
+gcloud config set api_endpoint_overrides/modelarmor "https://modelarmor.LOCATION.rep.googleapis.com/"
+```
+
+**No Security Command Center tier is required.** Model Armor is included in the Premium and Enterprise tiers and can also be bought and used on its own ([pricing](https://cloud.google.com/security-command-center/pricing)).
+
+## Permissions
+
+| To do this | Role | Where |
+|---|---|---|
+| Create a Model Armor template | `roles/modelarmor.admin` | project |
+| Set a floor setting | `roles/modelarmor.floorSettingsAdmin` | the node being set |
+| Set `vertexai.allowedModels` | `roles/orgpolicy.policyAdmin` | **the organisation** |
+| Enable the services above | `roles/serviceusage.serviceUsageAdmin` | project |
+
+## Do you need an Organization? A split answer
+
+**Floor settings: no.** They can be set at organisation, folder **or project** level, and the Terraform `parent` argument accepts all three ([floor settings](https://docs.cloud.google.com/security-command-center/docs/configure-model-armor-floor-settings)). A solo project gets the inline-enforcement half, which is the interesting half for learning.
+
+**Organisation policies: effectively yes.** The API accepts a project scope, but `roles/orgpolicy.policyAdmin` is documented only as granted on the organisation, and a project created under a personal Google account has no organisation node to grant it on.
+
+**Three fallbacks, best first:**
+
+1. **Do the Model Armor half for real** with `parent = "projects/PROJECT_ID"` and `location = "global"`. No organisation needed, and this is where the lesson lives.
+2. **Sign up for Cloud Identity free** if you own any domain. That creates the organisation and the policy half works as written.
+3. **Dry run the policy.** Write `google_org_policy_policy` with `dry_run_spec` instead of `spec`, which is audit-only by design, and `terraform validate` it without applying.
+
+## Deploying
+
+```bash
+cd exercises/07-deploy-model-armor/terraform
+terraform init
+terraform plan -out=tfplan
+terraform apply tfplan
+terraform destroy
+```
+
+The floor setting needs provider version 6.45 or later; the exercise pins 8.x.
+
+## Two schema notes
+
+**The filter type vocabulary differs between surfaces.** The provider documents `SEXUALLY_EXPLICIT`, `HATE_SPEECH`, `HARASSMENT` and `DANGEROUS`. Note the last one: not `DANGEROUS_CONTENT`, which is what Gemini's own safety categories use. The provider also documents only three confidence levels, while the API accepts a fourth, `NONE`.
+
+**Watch out for a typo in the published floor setting example.** One registry example writes `parent = "project/my-project-name"`. The correct prefix is `projects/`.
+
+## Cost
+
+**Treat this as free.** Model Armor gives 2,000,000 tokens a month at no cost standalone, and charges ten cents per million after that. Sensitive Data Protection inside Model Armor carries no additional charge. Organisation policies and floor settings cost nothing. A learning exercise will not come close to the free allowance.
+
+---
+
+# Azure, for exercise 08
+
+## Command line and credentials
+
+```bash
+brew update && brew install azure-cli     # macOS 13 or newer
+az login                                  # add --use-device-code with no browser
+az account set --subscription "My Demos"
+az account show --output table
+```
+
+Note that Microsoft now requires multifactor authentication for the Azure command line for user identities.
+
+## Register the resource providers
+
+Deploying a Bicep file registers the providers **in** the template automatically, but the Azure Resource Manager documentation states plainly that supporting resources are not covered, and gives monitoring and security resources as the example. That is exactly what exercise 08 deploys, so register by hand:
+
+```bash
+for ns in Microsoft.CognitiveServices Microsoft.OperationalInsights Microsoft.Insights \
+          Microsoft.KeyVault Microsoft.Storage Microsoft.MachineLearningServices; do
+  az provider register --namespace "$ns" --wait
+done
+
+az provider show -n Microsoft.CognitiveServices --query registrationState -o tsv
+```
+
+Skipping this produces `MissingSubscriptionRegistration` or `NoRegisteredProviderFound`.
+
+## Permissions
+
+**Contributor at resource group scope** deploys everything in the exercise. But Contributor is management plane only, so pair it with **Foundry User** at account scope if you also want to call the model.
+
+The Foundry roles were renamed and Microsoft recommends using the identifiers rather than the names while the rename rolls out ([RBAC](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-azure-ai-foundry)):
+
+| Role | Identifier |
+|---|---|
+| Foundry User | `53ca6127-db72-4b80-b1b0-d745d6d5456d` |
+| Foundry Owner | `c883944f-8b7b-4483-af10-35834be79c4a` |
+| Foundry Project Manager | `eadc314b-1a2d-4efa-be10-5d325db5065e` |
+
+**Do not use roles beginning with Cognitive Services, and do not use Azure AI Developer.** The documentation says so directly: despite the name, that one is scoped to machine learning workspaces and hubs, not to Foundry projects.
+
+Assigning a role needs Owner or Role Based Access Control Administrator; Contributor explicitly cannot.
+
+## The Key Vault decision you cannot undo
+
+Customer-managed keys **require** both soft delete and purge protection, and the command line reference says of purge protection, verbatim: *enabling this functionality is irreversible*. Soft delete is on by default for new vaults and cannot be turned off. The retention period is fixed at creation and **cannot be changed afterwards**.
+
+The consequence for a learning exercise is concrete: **use seven days, not the ninety-day default**, or you cannot reuse the vault name for three months.
+
+```bash
+az keyvault create \
+  --name kv-lab-$RANDOM \
+  --resource-group rg-agent-gov \
+  --location swedencentral \
+  --enable-purge-protection true \
+  --enable-rbac-authorization true \
+  --retention-days 7
+
+az keyvault key create --vault-name <kv> --name cmk-foundry --kty RSA --size 2048
+```
+
+Only RSA 2048 is supported. The vault and the Foundry account must be in the same region. Grant the account's identity access **before** enabling the key, and note that you cannot switch between Microsoft-managed and customer-managed keys after deployment.
+
+One unresolved detail: Microsoft's own pages disagree on whether the role is **Key Vault Crypto User** or **Key Vault Crypto Service Encryption User**. The newer page uses the first. Try that, and fall back on a 403.
+
+## Deploying
+
+```bash
+az group create --name rg-agent-gov --location swedencentral
+
+# what-if is the stronger check: it predicts changes and validates the file
+az deployment group what-if \
+  --resource-group rg-agent-gov \
+  --template-file exercises/08-deploy-foundry-guardrail/bicep/main.bicep \
+  --parameters keyVaultKeyUri=<your-key-uri>
+
+az deployment group create \
+  --resource-group rg-agent-gov \
+  --template-file exercises/08-deploy-foundry-guardrail/bicep/main.bicep \
+  --parameters keyVaultKeyUri=<your-key-uri>
+
+az group delete --name rg-agent-gov --yes
+```
+
+The Bicep compiler needs no separate install: the Azure command line installs a self-contained copy when a command needs it, though it does not put it on your path.
+
+## Model quota
+
+`gpt-5-mini`, which the exercise deploys, needs **no access request**. The only models currently gated by a registration form are computer use and Grok.
+
+There is a quota system though, and it is new. Microsoft introduced seven tiers, and subscription-level quota management started in May 2026 ([quotas](https://learn.microsoft.com/en-us/azure/foundry/openai/quotas-limits)). The lowest tier includes `gpt-5-mini` at Global Standard with the largest allocation of the four models available there, which is why the exercise uses it. Check your own allocation before deploying.
+
+A risk note rather than a verified fact: community reports describe brand-new subscriptions starting at zero tokens per minute. If your deployment fails on quota, that is the likely cause.
+
+## Cost
+
+| | Idle |
+|---|---|
+| Foundry account with no inference | **Nothing.** No fixed meter exists |
+| Log Analytics with no ingestion | **Nothing.** Five gigabytes a month are free |
+| Application Insights | Billed through the workspace |
+| Key Vault Standard with a software key | **Effectively nothing.** Per-operation only |
+
+**About nothing per month**, unless you choose a Premium vault with a hardware-backed key, which adds a dollar. What would break that: availability tests, sending all metrics in the diagnostic setting, or adding Sentinel to the workspace.
+
+---
+
 # Microsoft 365, for exercise 09
 
 **Read this before you spend an evening on it.** This is the hardest of the four to try cheaply, and being honest about that is more useful than a list of steps you cannot follow. Most of the interesting controls are gated behind licences, several at enterprise tier. The exercise is designed to be completed without a tenant for exactly this reason.
@@ -191,6 +475,20 @@ curl -s https://registry.terraform.io/v1/providers/hashicorp/google | python3 -c
 ```
 
 Every resource these exercises use was confirmed present in the current providers on that date: `aws_bedrock_guardrail`, `aws_bedrock_guardrail_version`, `aws_bedrock_model_invocation_logging_configuration`, `google_model_armor_template`, `google_model_armor_floorsetting`, `google_org_policy_policy`, `google_billing_budget` and `google_vertex_ai_reasoning_engine`. Present is not the same as unchanged, so read the argument reference for anything that fails to plan.
+
+## What we could not verify
+
+Listed so you can tell a gap from a fact. Nothing on this page was executed against a live account.
+
+**AWS.** There is no published region list for Guardrails generally, nor for contextual grounding; the 25-region safeguard tier list is a confirmed lower bound rather than the answer. The gaps in `AWSKeyManagementServicePowerUser` and the role-name constraint on `iam:PassRole` are read off the policy documents, not confirmed by an apply. "An empty log group is free" is an inference from the absence of a per-log-group dimension in the pricing.
+
+**Google.** Whether a project with no organisation can have an organisation policy applied at all is genuinely unclear; the interface accepts it and the required role is documented only at organisation scope. Treat it as blocked in practice and use the fallbacks. Behaviour of a `NONE` confidence level through Terraform is untested, since the provider does not document it.
+
+**The `google_vertex_ai_reasoning_engine` schema.** Two verification passes disagreed about whether `identity_type` is an argument on it. Exercise 07 says so in its own README. Check the current resource documentation before applying that block.
+
+**Azure.** Microsoft's pages disagree on the Key Vault role name for customer-managed keys, and both are current. No page explicitly states that the two monitoring providers must be registered by hand; that follows from the general rule plus the absence of a default-registration marker. Whether a brand-new subscription reliably receives non-zero model quota is a community report rather than documentation.
+
+**Microsoft 365.** Listed at the end of that section.
 
 ## If something fails
 

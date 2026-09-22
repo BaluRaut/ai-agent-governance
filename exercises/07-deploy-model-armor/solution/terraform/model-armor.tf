@@ -17,7 +17,7 @@ resource "google_model_armor_template" "agent" {
         confidence_level = "MEDIUM_AND_ABOVE"
       }
       rai_filters {
-        filter_type      = "DANGEROUS_CONTENT"
+        filter_type      = "DANGEROUS"
         confidence_level = "MEDIUM_AND_ABOVE"
       }
     }
@@ -61,7 +61,7 @@ resource "google_model_armor_floorsetting" "org" {
         confidence_level = "MEDIUM_AND_ABOVE"
       }
       rai_filters {
-        filter_type      = "DANGEROUS_CONTENT"
+        filter_type      = "DANGEROUS"
         confidence_level = "MEDIUM_AND_ABOVE"
       }
     }

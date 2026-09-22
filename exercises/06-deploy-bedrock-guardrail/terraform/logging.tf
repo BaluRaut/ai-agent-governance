@@ -5,7 +5,11 @@ resource "aws_cloudwatch_log_group" "bedrock" {
 }
 
 resource "aws_iam_role" "bedrock_logging" {
-  name = "${var.name_prefix}-bedrock-logging"
+  # The name must contain the literal string "AmazonBedrock". The managed policy
+  # AmazonBedrockFullAccess scopes iam:PassRole to arn:aws:iam::*:role/*AmazonBedrock*,
+  # so a sensibly-named role like "agent-gov-bedrock-logging" is refused at apply time
+  # with an error that does not mention the name at all.
+  name = "AmazonBedrockLogging-${var.name_prefix}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

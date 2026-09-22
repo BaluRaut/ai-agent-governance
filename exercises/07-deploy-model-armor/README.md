@@ -31,6 +31,14 @@ Every check passes, and you can say in one sentence why the floor setting is a s
 
 First time on this platform? [Provider setup](../../reference/provider-setup.md) has the account prerequisites, the APIs to enable, permissions, CLI authentication and teardown.
 
+## One resource whose schema we could not pin down
+
+Two separate verification passes disagreed about `google_vertex_ai_reasoning_engine`. Google's own documentation describes deploying an agent with `identity_type = "AGENT_IDENTITY"`, and that is the control the exercise is teaching. Reading the provider source at its current tag shows a `spec` block built around `source_code_spec`, with no `identity_type` in the documented example.
+
+Both can be true: the example may simply be minimal. But we could not confirm it, so **treat that block as illustrative rather than copy-and-paste**, and check the current resource documentation before applying. The concept is the point, and the concept is solid: an agent with its own identity, rather than a shared service account, is what makes the gateway and semantic governance features work at all.
+
+This is a good illustration of why the repository carries a could-not-verify list on every page. The alternative is to sound confident and waste your afternoon.
+
 ## Verify the provider schema before you apply
 
 These resources are newer than most, and the provider schema moves. The **verified** command-line forms are below; treat them as the source of truth and check the Terraform field names against the current provider registry before applying. `terraform validate` will catch most of it.
@@ -54,6 +62,7 @@ gcloud model-armor floorsettings update \
 
 ## Notice
 
+- **The filter type enum differs between the command line and Terraform.** The provider documents `SEXUALLY_EXPLICIT`, `HATE_SPEECH`, `HARASSMENT` and `DANGEROUS`. Google's API documentation also accepts a confidence level of `NONE`, which the provider does not document. Use the provider's vocabulary in HCL.
 - **Model Armor fails open.** The documentation says sanitisation may be skipped if the service is unavailable or unreachable, and a request routed to a region with no matching template errors. Create the template in every region you serve from, and decide in advance what your application does when screening did not happen.
 - **Gemini's own filters default to Off on newer models**, and are available for response filtering only, not prompt filtering. So the built-in filters are not the input control. Model Armor is.
 - **Location constraints do not cover generative AI the way you expect.** Resource location constraints do not apply to Model Garden publisher models, and are not enforced through the SDKs or the REST API. Use `constraints/gcp.restrictEndpointUsage` for that job.
