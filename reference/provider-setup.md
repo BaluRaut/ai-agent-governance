@@ -174,6 +174,24 @@ Two things a `destroy` will not clean up, so check them by hand:
 - **A KMS or Key Vault key.** Both clouds schedule key deletion rather than performing it, and Azure Key Vault with purge protection enabled cannot be purged early at all. Budget for the key hanging around for the retention window you set.
 - **Log data already written.** Destroying a log group or workspace removes future ingestion. Anything already stored was billed and, if it contains prompts, is still data you are responsible for.
 
+## Provider versions
+
+Checked against the Terraform registry on 22 September 2026. These move faster than anything else on this page, and a major version behind is the commonest reason an exercise's code will not plan.
+
+| Provider | Version then | Used by |
+|---|---|---|
+| `hashicorp/aws` | 6.66.0 | Exercise 06, pinned `~> 6.0` |
+| `hashicorp/google` | 8.3.0 | Exercise 07, pinned `~> 8.0` |
+| `hashicorp/google-beta` | 8.3.0 | Exercise 07, pinned `~> 8.0` |
+
+Check the current versions yourself before applying anything:
+
+```bash
+curl -s https://registry.terraform.io/v1/providers/hashicorp/google | python3 -c "import json,sys; print(json.load(sys.stdin)['version'])"
+```
+
+Every resource these exercises use was confirmed present in the current providers on that date: `aws_bedrock_guardrail`, `aws_bedrock_guardrail_version`, `aws_bedrock_model_invocation_logging_configuration`, `google_model_armor_template`, `google_model_armor_floorsetting`, `google_org_policy_policy`, `google_billing_budget` and `google_vertex_ai_reasoning_engine`. Present is not the same as unchanged, so read the argument reference for anything that fails to plan.
+
 ## If something fails
 
 - **Permission denied.** Compare against the roles listed in your platform's section below. The commonest cause is having enough permission to create the resource but not the identity or key it depends on.
