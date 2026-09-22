@@ -1,0 +1,21 @@
+node_modules/
+results/
+.env
+.DS_Store
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.json
+terraform.tfvars
+!terraform.tfvars.example
+
+# Azure / cloud creds
+.azure/
+*.pem
+*.pfx
+azureauth.json
+gcp-key.json

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent Governance</title>
+<meta name="description" content="What controls an AI agent needs, what Bedrock, Google Cloud, Microsoft Copilot and Microsoft Foundry each give you, and ten exercises ending in deployed infrastructure. Verified September 2026.">
+<meta property="og:title" content="AI Agent Governance">
+<meta property="og:description" content="Ten control families, four platforms compared, ten hands-on exercises. Every claim sourced and dated.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <span class="eyebrow">Verified 22 September 2026</span>
+      <button type="button" id="theme" class="theme" aria-label="Switch colour theme">◑</button>
+    </div>
+    <h1>AI Agent Governance</h1>
+    <p class="lead">What controls an AI agent actually needs, what Amazon Bedrock, Google Cloud, Microsoft Copilot and Microsoft Foundry each give you, and ten exercises that end in deployed infrastructure.</p>
+    <p class="sub">Every claim in the reference was checked against the vendor's own documentation on one date, with a source link and an explicit list of what could not be verified. Three of the four platforms renamed something during 2026.</p>
+    <nav class="herolinks">
+      <a class="btn primary" href="#matrix">The matrix</a>
+      <a class="btn" href="#families">Ten control families</a>
+      <a class="btn" href="#exercises">Exercises</a>
+      <a class="btn" href="https://github.com/BaluRaut/ai-agent-governance">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ─────────────── FAMILIES ─────────────── -->
+<section id="families">
+  <h2>Ten control families</h2>
+  <p>Platform-neutral on purpose, so you can compare Bedrock with Foundry rather than comparing two marketing vocabularies. The order follows a request through an agent.</p>
+  <ol class="families">
+    <li><span class="n">1</span><div><h3>Identity</h3><p>Who is this agent, as distinct from the person who triggered it?</p></div></li>
+    <li><span class="n">2</span><div><h3>Authorization</h3><p>What may it do, and is that the least it needs?</p></div></li>
+    <li><span class="n">3</span><div><h3>Input controls</h3><p>What reaches its context, and who can influence that?</p></div></li>
+    <li><span class="n">4</span><div><h3>Output controls</h3><p>What may leave, and what must never leave?</p></div></li>
+    <li><span class="n">5</span><div><h3>Action controls</h3><p>Which actions change the world, and who approves those?</p></div></li>
+    <li><span class="n">6</span><div><h3>Data boundary</h3><p>Where does the data sit, who holds the keys, how long is it kept?</p></div></li>
+    <li><span class="n">7</span><div><h3>Observability</h3><p>Could you reconstruct a single decision six months from now?</p></div></li>
+    <li><span class="n">8</span><div><h3>Evaluation</h3><p>How do you know it still behaves, after the last change?</p></div></li>
+    <li><span class="n">9</span><div><h3>Cost and quota</h3><p>What stops one loop from spending the quarter's budget overnight?</p></div></li>
+    <li><span class="n">10</span><div><h3>Lifecycle</h3><p>Who approved this version, and how would you withdraw it?</p></div></li>
+  </ol>
+  <p class="after">Eight of the ten are decided by an agent's <em>design</em>, not by a setting switched on afterwards. That is why the first exercise is a design review and not a console walkthrough. <a href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/control-catalogue.md">Read the full catalogue →</a></p>
+</section>
+
+<!-- ─────────────── MATRIX ─────────────── -->
+<section id="matrix">
+  <h2>The four platforms</h2>
+  <p>The strongest named capability in each family, and who currently leads it. Names as of this date: AWS is <strong>Bedrock and AgentCore</strong>, Google is <strong>Gemini Enterprise Agent Platform</strong>, renamed from Vertex AI in April 2026, and Microsoft has two different products for two different jobs.</p>
+
+  <div class="tablewrap">
+    <table class="matrix">
+      <thead>
+        <tr><th scope="col">Family</th><th scope="col">Bedrock</th><th scope="col">Google</th><th scope="col">Copilot Studio</th><th scope="col">Foundry</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Identity</th><td>AgentCore Identity</td><td class="lead-cell">SPIFFE, token bound to certificate</td><td class="lead-cell">Sponsor transfers to manager</td><td>Entra Agent ID, automatic</td></tr>
+        <tr><th scope="row">Authorization</th><td class="lead-cell">Cedar, plus automated reasoning over the policy</td><td class="lead-cell">Allow and deny in one policy, dry run</td><td>Connector data policies</td><td>Toolbox, MCP scopes</td></tr>
+        <tr><th scope="row">Input</th><td>Org-wide enforcement, comprehensive by default</td><td class="lead-cell">Floor settings: a minimum nobody can go below</td><td>Built in, not configurable</td><td class="lead-cell">Controls on tool call and tool response</td></tr>
+        <tr><th scope="row">Output</th><td class="lead-cell">Automated Reasoning, formal logic</td><td>Model Armor</td><td class="lead-cell">Sensitivity labels, if EXTRACT is withheld</td><td>Four categories with severity</td></tr>
+        <tr><th scope="row">Action</th><td class="lead-cell">Temporal policies, session-aware</td><td class="lead-cell">Intent gating in plain English</td><td class="gap">none</td><td>MCP approval, defaults to always</td></tr>
+        <tr><th scope="row">Data boundary</th><td class="lead-cell">Zero retention by default, enforceable org-wide</td><td>Six separate opt-outs</td><td>Mailbox retention</td><td>Explicit deletion required</td></tr>
+        <tr><th scope="row">Observability</th><td>OpenTelemetry to CloudWatch</td><td class="gap">Inference absent from the audit list</td><td class="lead-cell">Injection attempts as queryable fields</td><td>Traces, sensitive fields move Sept 30</td></tr>
+        <tr><th scope="row">Evaluation</th><td>AgentCore Evaluations, online sampling</td><td>Rubric and trajectory metrics</td><td class="gap">Advisory scan only</td><td class="lead-cell">Widest evaluator set, red teaming agent</td></tr>
+        <tr><th scope="row">Cost</th><td class="gap">No dollar cap anywhere</td><td class="lead-cell">Spend cap blocks at 100%</td><td class="lead-cell">Per-agent limit turns the agent off</td><td>Budgets, alerting</td></tr>
+        <tr><th scope="row">Lifecycle</th><td>Agent Registry</td><td>Agent Registry</td><td class="lead-cell">Unowned and unmanaged agent counts</td><td>Fleet inventory, preview</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="legend"><span class="key lead-key"></span> currently leads &nbsp;&nbsp; <span class="key gap-key"></span> a real gap, stated plainly</p>
+
+  <div class="callout">
+    <h3>Three things nobody does well</h3>
+    <p>A matrix of ticks implies more maturity than exists, so this belongs next to it.</p>
+    <ul>
+      <li><strong>Agent identity has no standard.</strong> All four have shipped something; none of it interoperates. The standards work is real and early.</li>
+      <li><strong>Input filtering is a rate reducer on all four.</strong> The model cannot reliably separate instructions from content. What differs is whether you get somewhere to put a control at the point of action, and only two currently do.</li>
+      <li><strong>Evidence is harder than control.</strong> Configuring a guardrail takes an afternoon. Reconstructing one agent decision from six months ago takes a system nobody budgeted for.</li>
+    </ul>
+  </div>
+
+  <p class="after"><a href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/platform-matrix.md">The full matrix, with caveats per row →</a></p>
+
+  <h3 class="sub">Per platform</h3>
+  <div class="cards">
+    <a class="card" href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/platforms/aws-bedrock.md"><h4>Amazon Bedrock and AgentCore</h4><p>Strongest data defaults and tool authorization. Opens with six things most existing material gets wrong, starting with the fact that guardrails do not work on one of the two inference endpoints.</p></a>
+    <a class="card" href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/platforms/google-vertex-ai.md"><h4>Gemini Enterprise Agent Platform</h4><p>Strongest identity design, and the source of the best single idea here: floor settings. Renamed from Vertex AI, though the machine-readable identifiers did not change.</p></a>
+    <a class="card" href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/platforms/microsoft-copilot.md"><h4>Microsoft Copilot and Copilot Studio</h4><p>Strongest lifecycle governance, for agents built by people who are not engineers. A new control plane arrived in 2026 and the old agent registry was retired.</p></a>
+    <a class="card" href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/platforms/azure-ai-foundry.md"><h4>Microsoft Foundry</h4><p>Strongest evaluation and the only platform that can place a control on a tool call. Also the one where a guardrail fails open silently if you reference it wrongly.</p></a>
+    <a class="card wide" href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/frameworks.md"><h4>Frameworks and regulations</h4><p>Where these controls land against the EU AI Act as amended in July 2026, the NIST risk management framework, ISO 42001 and both OWASP lists. The high-risk deadlines moved, so anything written before August 2026 has the wrong dates.</p></a>
+  </div>
+</section>
+
+<!-- ─────────────── EXERCISES ─────────────── -->
+<section id="exercises">
+  <h2>Ten exercises</h2>
+  <p>Small programs you finish yourself, with checks that tell you when they work. In this order on purpose: the first produces requirements, the next four produce controls and evidence, the middle four deploy real infrastructure, and the last refuses to ship when any of the others is unhappy.</p>
+
+  <ol class="exlist">
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/01-control-inventory"><h4>Control inventory</h4><p>Derive the controls an agent's design forces on you, as code rather than as a document.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/02-policy-as-code"><h4>Policy as code</h4><p>A decision engine between the model and your tools. Default deny, deny wins, every decision recorded.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/03-injection-testing"><h4>Injection testing</h4><p>Build a bad filter, measure it honestly, and watch five of six evasions walk past.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/04-audit-trail"><h4>Audit trail</h4><p>A hash-chained record that answers why it did that, and breaks visibly when edited.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/05-evaluation-gate"><h4>Evaluation gate</h4><p>A version that scores higher overall and is still blocked, because one safety case regressed.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/06-deploy-bedrock-guardrail"><h4>Deploy a Bedrock guardrail<span class="tag">Terraform</span></h4><p>Guardrail, published version, invocation logging, and the policy that makes using it compulsory.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/07-deploy-model-armor"><h4>Deploy Model Armor<span class="tag">Terraform</span></h4><p>A template, a floor setting nobody can go below, a model allowlist, and an agent with its own identity.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/08-deploy-foundry-guardrail"><h4>Deploy a Foundry guardrail<span class="tag">Bicep</span></h4><p>Both Prompt Shields, key auth disabled, private access, and two decisions you cannot change later.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/09-govern-copilot"><h4>Govern Microsoft Copilot</h4><p>A conformance check across four admin centres, including the sensitivity label trap.</p></a></li>
+    <li><a href="https://github.com/BaluRaut/ai-agent-governance/tree/main/exercises/10-release-pipeline"><h4>The release pipeline</h4><p>One gate over every signal, with waivers that have an owner and an expiry date.</p></a></li>
+  </ol>
+
+  <div class="callout">
+    <h3>The deployment ones work without a cloud account</h3>
+    <p>Exercises 6 to 9 are graded by reading the infrastructure code you write, so they pass on a laptop with no credentials and no cost. Applying them for real is optional, and each README carries the commands, the cost note and the teardown.</p>
+  </div>
+</section>
+
+<!-- ─────────────── RUN ─────────────── -->
+<section id="run">
+  <h2>Running it</h2>
+  <p>Node 20 or newer. No API keys. Nothing in this repository calls a model.</p>
+  <pre><code>git clone https://github.com/BaluRaut/ai-agent-governance.git
+cd ai-agent-governance
+npm install
+npm run list</code></pre>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>npm run ex -- 04</code></td><td>Runs your version of exercise 04, with its checks.</td></tr>
+        <tr><td><code>npm run ex -- 04 --solution</code></td><td>Runs the finished version, so you can compare.</td></tr>
+        <tr><td><code>npm run check:all</code></td><td>Runs every exercise's checks and reports where you stand.</td></tr>
+        <tr><td><code>npm run typecheck</code></td><td>Compiles everything.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─────────────── LIMITS ─────────────── -->
+<section id="limits">
+  <h2>Honest limits</h2>
+  <dl class="faq">
+    <dt>Verified on one date</dt>
+    <dd>22 September 2026. Six of the platform pages record facts that changed during 2026, including a rename on each of the three clouds and a formally amended EU AI Act timeline. Each reference page ends with a list of what could not be verified, so you can tell a gap from a fact.</dd>
+
+    <dt>Nothing here was applied to a live account</dt>
+    <dd>The infrastructure code is written against the documented resource schemas and checked for conformance. It has not been deployed. Provider schemas move, so run <code>terraform validate</code> against the current provider before you apply anything.</dd>
+
+    <dt>This is not legal advice</dt>
+    <dd>The framework mapping is an engineer's reading of primary sources. Where a conclusion is an inference rather than something a regulator has stated, it is marked as one.</dd>
+
+    <dt>Why the exercises have no model calls</dt>
+    <dd>So they run anywhere, cost nothing, and give the same answer twice. The trade is that the injection filter you build in exercise 3 is cruder than a commercial one. That is the point of the exercise: the commercial one has better numbers and the same shape of gap.</dd>
+  </dl>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="fine"><a href="https://github.com/BaluRaut/ai-agent-governance">github.com/BaluRaut/ai-agent-governance</a> · MIT licensed · Reference verified 22 September 2026</p>
+  </div>
+</footer>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>
