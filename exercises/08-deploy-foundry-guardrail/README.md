@@ -33,7 +33,13 @@ That is why the checks below insist on a reference by resource ID, and why you s
 2. Run: `npm run ex -- 08`
 3. Compare with `solution/bicep/main.bicep`.
 
+## Done when
+
+Every check passes, and you can name the two settings that cannot be changed after deployment and the one failure mode where the guardrail reports healthy while filtering nothing.
+
 ## Deploying it for real
+
+First time on this platform? [Provider setup](../../reference/provider-setup.md) has the account prerequisites, permissions, CLI authentication and teardown.
 
 ```bash
 az group create --name rg-agent-gov --location swedencentral

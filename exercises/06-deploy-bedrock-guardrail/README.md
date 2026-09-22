@@ -26,7 +26,13 @@ If you have Terraform installed, `terraform -chdir=terraform validate` is a usef
 2. Run: `npm run ex -- 06`
 3. Compare against `solution/terraform/` when you are done.
 
+## Done when
+
+Every check passes, and you can answer three questions without looking: which endpoint this does *not* protect, which fields the filters skip, and why the version has to be numeric.
+
 ## Applying it for real
+
+First time on this platform? [Provider setup](../../reference/provider-setup.md) has the account prerequisites, permissions, CLI authentication and teardown.
 
 Only with an account you are allowed to change, and read the cost note first.
 

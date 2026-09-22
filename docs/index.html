@@ -28,6 +28,7 @@
       <a class="btn primary" href="#matrix">The matrix</a>
       <a class="btn" href="#families">Ten control families</a>
       <a class="btn" href="#exercises">Exercises</a>
+      <a class="btn" href="#plan">Study plan</a>
       <a class="btn" href="https://github.com/BaluRaut/ai-agent-governance">Source</a>
     </nav>
   </div>
@@ -124,6 +125,98 @@
     <h3>The deployment ones work without a cloud account</h3>
     <p>Exercises 6 to 9 are graded by reading the infrastructure code you write, so they pass on a laptop with no credentials and no cost. Applying them for real is optional, and each README carries the commands, the cost note and the teardown.</p>
   </div>
+</section>
+
+<!-- ─────────────── STUDY PLAN ─────────────── -->
+<section id="plan">
+  <h2>Study plan</h2>
+  <p>Four weeks at about an hour a day. Or one of three shorter paths, if you came here for one thing.</p>
+
+  <h3 class="sub">Which path is yours</h3>
+  <div class="cards">
+    <div class="card static">
+      <h4>You are building an agent</h4>
+      <p>Exercises 1 to 5, then the deployment exercise for the platform you actually use, then 10. About two weeks. Leave the other platforms' pages until you need them.</p>
+    </div>
+    <div class="card static">
+      <h4>You run a platform</h4>
+      <p>The matrix first, then exercises 6 to 10. Look for where each platform lets you set a floor rather than a default, because that is what stops a team configuring below your baseline.</p>
+    </div>
+    <div class="card static">
+      <h4>You have to answer an auditor</h4>
+      <p>The control catalogue and the frameworks page, then exercises 4 and 10. Those two produce the evidence and the record of the decision, which is what the question is actually about.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">The four weeks</h3>
+  <div class="weeks">
+    <article class="week">
+      <header><span class="wk">Week 1</span><h4>What controls exist and why</h4></header>
+      <p class="goal">By Sunday you can look at an agent design and say which controls it forces on you, write those as code, and explain why a filter is not a wall.</p>
+      <ol>
+        <li>Read the ten control families. Note the three your own project is weakest on.</li>
+        <li>Exercise 1. Then add a fourth agent describing something you actually work on.</li>
+        <li>Exercise 2. Add a policy of your own; a time-of-day rule forces you to notice the engine sees calls, not intentions.</li>
+        <li>Exercise 3. Read what got past you, then add two evasions of your own.</li>
+        <li>Catch up, or redo exercise 1 from scratch.</li>
+      </ol>
+      <p class="check"><strong>Checkpoint.</strong> Write the exfiltration triad in your own words and name which of your systems has all three. If you cannot name one, you have either a very small estate or an incomplete inventory.</p>
+    </article>
+
+    <article class="week">
+      <header><span class="wk">Week 2</span><h4>Evidence and the gate</h4></header>
+      <p class="goal">By Sunday you can reconstruct a decision from a trace, and block a release automatically when safety regresses.</p>
+      <ol>
+        <li>Exercise 4. Tamper with a different event and confirm the chain breaks in the right place.</li>
+        <li>Exercise 4 again from scratch. Redaction on the way in, identities kept, is worth doing twice.</li>
+        <li>Exercise 5. Look closely at why version 2 is blocked despite scoring higher.</li>
+        <li>Write ten eval cases for something you work on, at least three of them safety or refusal.</li>
+        <li>Exercise 10, the release pipeline.</li>
+      </ol>
+      <p class="check"><strong>Checkpoint.</strong> Explain to someone non-technical why a version that scores better overall can still be the wrong one to ship. That argument is where evaluation gates usually die.</p>
+    </article>
+
+    <article class="week">
+      <header><span class="wk">Week 3</span><h4>The platforms</h4></header>
+      <p class="goal">By Sunday you can say what each platform gives you, what it does not, and what you would have to build yourself.</p>
+      <ol>
+        <li>The matrix, then the page for the platform you use. Read its could-not-verify list.</li>
+        <li>Exercise 6, 7 or 8, whichever matches your platform.</li>
+        <li>The same exercise for a platform you do <em>not</em> use. This is where the comparison becomes real.</li>
+        <li>Exercise 9, even with no tenant. The four-admin-centre sprawl is the lesson.</li>
+        <li>The frameworks page. Map your three weakest families to NIST subcategories and the OWASP agentic list.</li>
+      </ol>
+      <p class="check"><strong>Checkpoint.</strong> Name one control your platform gives you that you had not been using, and one gap you will have to fill yourself. All four have both.</p>
+    </article>
+
+    <article class="week build">
+      <header><span class="wk">Week 4</span><h4>Apply it to something real</h4></header>
+      <p class="goal">No new exercises. Take one agent that exists, or one you are about to build, and produce four artefacts.</p>
+      <ol>
+        <li>A control inventory, generated from a real specification.</li>
+        <li>A policy file covering the tools that agent actually has, with an approval gate on everything irreversible.</li>
+        <li>Ten eval cases including safety and refusal, with a recorded baseline.</li>
+        <li>A gate in your pipeline that runs all three and blocks on a safety regression.</li>
+      </ol>
+      <p class="check"><strong>Finished when</strong> someone who was not in the room can read the four artefacts and tell you what the agent may do, what stops it, and who approved it.</p>
+    </article>
+  </div>
+
+  <h3 class="sub">How to work through one exercise</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th scope="col">Time</th><th scope="col">Step</th></tr></thead>
+      <tbody>
+        <tr><td>5 min</td><td>Read the whole README, including the Notice section at the end. That part is why the exercise exists.</td></tr>
+        <tr><td>25 min</td><td>Attempt the TODOs with the solution closed. Being stuck is where the learning is.</td></tr>
+        <tr><td>2 min</td><td>Run it and read the failures. Each one carries a hint.</td></tr>
+        <tr><td>10 min</td><td>Only now open the solution. Find the lines that differ from yours and work out why.</td></tr>
+        <tr><td>3 min</td><td>Write one sentence about what surprised you. Keep these in one file.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="after"><strong>You have learned it when</strong> you can look at an agent someone else built and, in ten minutes, name the two controls it is missing and the one that gives false assurance. Every platform has at least one control that looks stronger than it is. Finding those is the skill. <a href="https://github.com/BaluRaut/ai-agent-governance/blob/main/STUDY-PLAN.md">Full study plan →</a></p>
 </section>
 
 <!-- ─────────────── RUN ─────────────── -->

@@ -145,6 +145,8 @@ Bulk **agent management rules** are the practical governance tool ([agent settin
 
 Who can build at all is controlled by the **Copilot Author** setting in the Power Platform admin center, bound to a security group. Note that you cannot globally disable agent creation; what you can disable is publishing agents that use generative AI features ([security and governance](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-and-governance)).
 
+**That setting does less than its name suggests, and this is the most consequential misconception on the platform.** Assigning the security group **does not revoke access from anyone who already has it**. For a person to actually lose the ability to author, three things must all be true: they are not in the group, they hold no Copilot Studio per-user or trial licence, and **they hold no Microsoft Copilot licence** ([troubleshooting](https://learn.microsoft.com/en-us/troubleshoot/power-platform/copilot-studio/licensing/authors-access)). The third condition is the one nobody expects. An organisation that has deployed Copilot widely has, in effect, granted agent authoring widely, and the admin setting will not tell you so.
+
 One posture note worth carrying into a risk register: on third-party MCP servers Microsoft states plainly that these are non-Microsoft products, that you connect at your own risk, and that Microsoft has no responsibility in relation to your use of them ([agent registry](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/agent-registry)).
 
 ---

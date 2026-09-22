@@ -33,11 +33,15 @@ The careless tenant produces every finding, the hardened one produces none, and 
 
 ## Applying these for real
 
+First time in a tenant? [Provider setup](../../reference/provider-setup.md) covers which licence gates which control, the admin roles needed, and what you can try without a Copilot licence at all.
+
 Do this in a test tenant first. Several of these changes are visible to every user immediately.
 
 **Stop anonymous agents and risky knowledge sources.** Power Platform admin center → Security → Data and privacy → Data policy. Set these connectors to Blocked: `Chat without Microsoft Entra ID authentication in Copilot Studio`, and, if your risk profile calls for it, `Knowledge source with public websites and data in Copilot Studio` and `HTTP`. Enforcement is real time and a violation makes the Publish button unavailable.
 
 **Restrict who can build.** Power Platform admin center → Settings → Copilot Author, bound to a security group. Note there is no switch that globally disables agent creation; the nearest equivalent is turning off publishing of agents that use generative AI features.
+
+**And the part that surprises everyone about that setting:** assigning the group does **not** revoke anyone's existing access. To actually stop a person authoring, all three must hold: they are not in the group, they have no Copilot Studio licence, **and they have no Microsoft Copilot licence**. That third condition means a tenant which rolled Copilot out broadly has effectively given everyone the ability to author agents, while the admin setting suggests otherwise.
 
 **Turn off web grounding** where it is not wanted. This one has a single home: the policy is `Allow web search in Copilot`, and it is available **only in the Cloud Policy service for Microsoft 365**, scopable to users or groups. Leaving it unconfigured means web search is on.
 
@@ -59,3 +63,4 @@ Up to 20,000 sites. On sites over 500,000 items the change can take more than a 
 - **Sensitivity labels only hold if users lack the EXTRACT right.** A label that encrypts but grants EXTRACT to everyone does not stop Copilot returning the content. This is the most commonly misunderstood control on the platform.
 - **Blocking behaves differently per agent platform.** Blocking a SharePoint or Foundry agent only affects Copilot Chat. Read the table in the platform reference before promising anyone an agent is off.
 - **Admin actions fail silently** against agents in environments running Power Platform Firewall in active enforcement. Silent failure is worse than an error, so verify rather than assume.
+- **Treat the Copilot Author setting as a narrowing, not a gate.** The exercise models it as `copilotAuthorRestrictedToGroup`, and the finding it raises is worth raising, but in a real tenant you must check the licence side too. A control that reports success while doing nothing is worse than no control.

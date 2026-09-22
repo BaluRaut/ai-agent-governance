@@ -181,3 +181,22 @@ footer { padding-block: 32px 48px; }
   ol.families > li { grid-template-columns: 34px 1fr; gap: 11px; }
   ol.exlist a { grid-template-columns: 34px 1fr; gap: 10px; }
 }
+
+/* ── study plan ─────────────────────────────────────── */
+.card.static { cursor: default; box-shadow: none; }
+.card.static:hover { border-color: var(--line); }
+.card.static h4 { color: var(--ink); }
+.weeks { display: grid; gap: 14px; }
+.week { padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+.week.build { background: var(--brand-soft); border-color: var(--brand); }
+.week header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.wk {
+  font-family: "JetBrains Mono", monospace; font-size: .68rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--on-brand);
+  background: var(--brand); padding: 4px 10px; border-radius: 999px; flex: none;
+}
+.week .goal { color: var(--muted); font-size: .95rem; }
+.week ol { margin: 14px 0 0; padding-left: 22px; display: grid; gap: 7px; font-size: .95rem; }
+.week ol li::marker { color: var(--muted); font-weight: 700; }
+.week .check { margin-top: 16px; padding: 12px 15px; font-size: .93rem; background: var(--sunk); border-radius: 9px; border-left: 3px solid var(--amber); }
+.week.build .check { background: var(--surface); }

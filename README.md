@@ -1,6 +1,6 @@
 # AI Agent Governance
 
-**📘 [Read the guide →](https://baluraut.github.io/ai-agent-governance/)**
+**📘 [Read the guide →](https://baluraut.github.io/ai-agent-governance/)** · **[Study plan](STUDY-PLAN.md)** · **[Provider setup](reference/provider-setup.md)**
 
 What controls an AI agent actually needs, what Amazon Bedrock, Google Cloud, Microsoft Copilot and Microsoft Foundry each give you, and ten exercises that end in deployed infrastructure.
 
@@ -30,6 +30,12 @@ Everything in `reference/` was verified against the vendors' own documentation o
 | 10 | [The release pipeline](exercises/10-release-pipeline) | all ten | no |
 
 Exercises 01 to 05 and 10 need nothing but Node. Exercises 06 to 09 are graded by reading your infrastructure code, so they pass without an account; applying them for real is optional and each README carries a cost note.
+
+## Where to start
+
+New to this? Follow the **[study plan](STUDY-PLAN.md)**. It has four weeks at an hour a day, plus three shorter paths for people who came here for one thing: building an agent, running a platform, or answering an auditor.
+
+Want to deploy the cloud exercises for real? **[Provider setup](reference/provider-setup.md)** has the exact prerequisites, permissions, commands, costs and teardown for each platform.
 
 ## Setup
 

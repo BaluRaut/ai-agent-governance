@@ -23,6 +23,14 @@ A template is a control one team applies. A floor setting is a control nobody ca
 2. Run: `npm run ex -- 07`
 3. Compare with `solution/terraform/`.
 
+## Done when
+
+Every check passes, and you can say in one sentence why the floor setting is a stronger control than the template, even though the template has more filters in it.
+
+## Applying it for real
+
+First time on this platform? [Provider setup](../../reference/provider-setup.md) has the account prerequisites, the APIs to enable, permissions, CLI authentication and teardown.
+
 ## Verify the provider schema before you apply
 
 These resources are newer than most, and the provider schema moves. The **verified** command-line forms are below; treat them as the source of truth and check the Terraform field names against the current provider registry before applying. `terraform validate` will catch most of it.
