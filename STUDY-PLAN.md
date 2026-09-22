@@ -1,5 +1,7 @@
 # Study plan
 
+Before you commit four weeks, read [what you will be able to do](README.md#what-you-will-be-able-to-do). It has the eight questions you should be able to answer at the end, and an honest note on what this does not make you.
+
 Four weeks at about an hour a day, or three shorter paths if you came here for one thing. The rule that matters in every version: attempt before you open the solution, every time.
 
 ## Which path is yours

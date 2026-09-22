@@ -6,6 +6,39 @@ What controls an AI agent actually needs, what Amazon Bedrock, Google Cloud, Mic
 
 Everything in `reference/` was verified against the vendors' own documentation on **22 September 2026**, with a source link on every claim and an explicit list of what could not be verified. This area moves fast enough that a page without a date is a liability.
 
+## What you will be able to do
+
+Concretely, after the ten. These are things you either can do or cannot, not things you "understand".
+
+**Review.** Read an agent design and derive, in ten minutes, the controls it forces on you and the ones it is missing. Spot the control that looks stronger than it is, which every one of the four platforms has at least one of. Do this as code, so two reviewers get the same answer and it runs in a pipeline.
+
+**Build.** Write the enforcement, not the document. A policy engine that decides per tool call. An audit trail you can reconstruct a decision from six months later, that breaks visibly if edited. An evaluation gate that blocks a release automatically when safety regresses. Guardrails as infrastructure code on three clouds.
+
+**Prove.** Answer the question an auditor actually asks, which is never "do you have controls" but "show me this decision". Map what you built to the EU AI Act, the NIST framework and the OWASP agentic list, and know which of your answers is an inference rather than a fact.
+
+### Test yourself
+
+If you can answer these without looking, you have it. Each is taught by an exercise, and each is a question someone will eventually ask you.
+
+1. Which property of a tool, not its name, decides whether the agent needs an approval gate?
+2. Name the three properties that together make data exfiltration possible without anyone attacking your infrastructure.
+3. Your injection filter has 95 percent recall. Why is that not enough, and what makes the remainder survivable?
+4. A new version scores higher overall on your eval set. Give a reason to block it anyway.
+5. Your guardrail is configured and the platform reports it healthy. Name two ways it could be filtering nothing.
+6. Why should an expired waiver block a release, even on a low-severity finding?
+7. Who is accountable for each of your agents next year, and how long does it take you to answer that?
+8. Which of your platform's controls is a floor, and which is only a default?
+
+### What you can show someone
+
+Week four produces four artefacts for a real agent: a control inventory, a policy file with an approval gate on everything irreversible, ten eval cases with a baseline, and a pipeline gate that runs all three. Those four are the evidence pack for an internal review, and they are also the most credible thing you can bring to a conversation about an AI platform or security role.
+
+### What this does not make you
+
+Say this plainly to anyone who asks. It is **not a legal qualification and not a certification**. The framework mapping is an engineer's reading of primary sources, with the inferences marked as such. It does not replace your organisation's compliance function, and a vendor's ISO certificate does not cover your deployment, which is a point both AWS and Microsoft make in their own words.
+
+What it does give you is the technical half of the job, which is the half that is usually missing. Most organisations have someone who can write an AI policy. Far fewer have someone who can make one enforceable.
+
 ## Three parts
 
 **[The control catalogue](reference/control-catalogue.md)** — ten families of control, platform-neutral, each with what goes wrong without it and how to test it. Everything else is written against these.

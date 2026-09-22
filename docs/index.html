@@ -28,6 +28,7 @@
       <a class="btn primary" href="#matrix">The matrix</a>
       <a class="btn" href="#families">Ten control families</a>
       <a class="btn" href="#exercises">Exercises</a>
+      <a class="btn" href="#outcomes">What you get</a>
       <a class="btn" href="#plan">Study plan</a>
       <a class="btn" href="https://github.com/BaluRaut/ai-agent-governance">Source</a>
     </nav>
@@ -125,6 +126,46 @@
     <h3>The deployment ones work without a cloud account</h3>
     <p>Exercises 6 to 9 are graded by reading the infrastructure code you write, so they pass on a laptop with no credentials and no cost. Applying them for real is optional, and each README carries the commands, the cost note and the teardown.</p>
     <p>If you do want to deploy them, <a href="https://github.com/BaluRaut/ai-agent-governance/blob/main/reference/provider-setup.md">provider setup</a> has the prerequisites, permissions and costs per platform, and is honest about which controls you cannot try without paying. The short version: AWS and Google cost cents for a day, Google's most interesting control needs an Organization rather than a bare project, and most of the Microsoft 365 controls are behind enterprise licences.</p>
+  </div>
+</section>
+
+<!-- ─────────────── OUTCOMES ─────────────── -->
+<section id="outcomes">
+  <h2>What you will be able to do</h2>
+  <p>Concretely, after the ten. These are things you either can do or cannot, not things you "understand".</p>
+
+  <div class="cards">
+    <div class="card static">
+      <h4>Review</h4>
+      <p>Read an agent design and derive, in ten minutes, the controls it forces on you and the ones it is missing. Spot the control that looks stronger than it is, which every one of the four platforms has at least one of. Do it as code, so two reviewers get the same answer.</p>
+    </div>
+    <div class="card static">
+      <h4>Build</h4>
+      <p>Write the enforcement, not the document. A policy engine that decides per tool call. An audit trail you can reconstruct a decision from, that breaks visibly if edited. A gate that blocks a release when safety regresses. Guardrails as infrastructure code on three clouds.</p>
+    </div>
+    <div class="card static">
+      <h4>Prove</h4>
+      <p>Answer the question an auditor actually asks, which is never "do you have controls" but "show me this decision". Map what you built to the EU AI Act, NIST and the OWASP agentic list, and know which of your answers is an inference rather than a fact.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Test yourself</h3>
+  <p>If you can answer these without looking, you have it. Each is taught by an exercise, and each is a question someone will eventually ask you.</p>
+  <ol class="selftest">
+    <li>Which property of a tool, not its name, decides whether the agent needs an approval gate?</li>
+    <li>Name the three properties that together make data exfiltration possible without anyone attacking your infrastructure.</li>
+    <li>Your injection filter has 95 percent recall. Why is that not enough, and what makes the remainder survivable?</li>
+    <li>A new version scores higher overall on your eval set. Give a reason to block it anyway.</li>
+    <li>Your guardrail is configured and the platform reports it healthy. Name two ways it could be filtering nothing.</li>
+    <li>Why should an expired waiver block a release, even on a low-severity finding?</li>
+    <li>Who is accountable for each of your agents next year, and how long does it take you to answer that?</li>
+    <li>Which of your platform's controls is a floor, and which is only a default?</li>
+  </ol>
+
+  <div class="callout">
+    <h3>What this does not make you</h3>
+    <p>Worth saying plainly. It is <strong>not a legal qualification and not a certification</strong>. The framework mapping is an engineer's reading of primary sources, with the inferences marked as such. It does not replace your organisation's compliance function, and a vendor's ISO certificate does not cover your deployment, which is a point both AWS and Microsoft make in their own words.</p>
+    <p>What it does give you is the technical half of the job, which is the half that is usually missing. Most organisations have someone who can write an AI policy. Far fewer have someone who can make one enforceable.</p>
   </div>
 </section>
 

@@ -158,10 +158,15 @@ ol.exlist { list-style: none; margin: 24px 0 0; padding: 0; counter-reset: ex; d
 ol.exlist > li { counter-increment: ex; background: var(--surface); }
 ol.exlist a { display: grid; grid-template-columns: 46px 1fr; gap: 14px; padding: 15px 18px; text-decoration: none; color: inherit; }
 ol.exlist a:hover { background: var(--sunk); }
+/* The number sits in column one; everything else stacks in column two.
+   Without this the paragraph lands in the 46px column and wraps one word per line. */
 ol.exlist a::before {
   content: counter(ex, decimal-leading-zero);
+  grid-column: 1; grid-row: 1;
   font-family: "JetBrains Mono", monospace; font-size: .8rem; font-weight: 600; color: var(--muted); padding-top: 3px;
 }
+ol.exlist a > * { grid-column: 2; min-width: 0; }
+ol.exlist a > h4 { grid-row: 1; }
 ol.exlist h4 { margin-bottom: 4px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 ol.exlist p { font-size: .93rem; color: var(--muted); }
 .tag { font-family: "JetBrains Mono", monospace; font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--amber); background: var(--amber-soft); padding: 3px 8px; border-radius: 999px; }
@@ -200,3 +205,13 @@ footer { padding-block: 32px 48px; }
 .week ol li::marker { color: var(--muted); font-weight: 700; }
 .week .check { margin-top: 16px; padding: 12px 15px; font-size: .93rem; background: var(--sunk); border-radius: 9px; border-left: 3px solid var(--amber); }
 .week.build .check { background: var(--surface); }
+
+/* ── self test ──────────────────────────────────────── */
+ol.selftest { margin: 18px 0 0; padding: 0; list-style: none; counter-reset: q; display: grid; gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+ol.selftest li {
+  counter-increment: q; background: var(--surface); padding: 13px 18px 13px 52px; position: relative; font-size: .96rem;
+}
+ol.selftest li::before {
+  content: counter(q); position: absolute; left: 18px; top: 13px;
+  font-family: "JetBrains Mono", monospace; font-size: .78rem; font-weight: 600; color: var(--brand);
+}
